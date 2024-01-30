@@ -2,6 +2,9 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
+import Filter from "@/components/shared/Filter";
+import { HomePageFilters } from "@/constants/filters";
+import HomeFilters from "@/components/home/HomeFilters";
 
 function Home() {
   return (
@@ -24,8 +27,14 @@ function Home() {
           placeholder="Search questions..."
           otherClasses="flex-1"
         />
-        Filters
+        <Filter
+          filters={HomePageFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+          containerClasses="hidden max-md:flex"
+        />
       </div>
+
+      <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6"></div>
     </>
