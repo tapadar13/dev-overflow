@@ -5,15 +5,15 @@ import RenderTag from "./RenderTag";
 const hotQuestions = [
   {
     _id: "1",
-    title: "How can I learn JavaScript?",
+    title: "Explain the difference between 'Object.freeze()' and 'const'?",
   },
   {
     _id: "2",
-    title: "How can I learn JavaScript?",
+    title: "What is React Fiber?",
   },
   {
     _id: "3",
-    title: "How can I learn JavaScript?",
+    title: "How do you configure dynamic routes in a Next.js application?",
   },
 ];
 
