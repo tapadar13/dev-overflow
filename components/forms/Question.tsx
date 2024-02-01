@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,9 +20,14 @@ import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import { z } from "zod";
 import Image from "next/image";
+import { createQuestion } from "@/lib/actions/question.action";
+// import { type } from "os";
+
+const type: any = "create";
 
 const Question = () => {
   const editorRef = useRef(null);
+  const [submitting, setSubmitting] = useState(false);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
@@ -35,10 +40,18 @@ const Question = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+    setSubmitting(true);
+
+    try {
+      // make an async call to API - create a question
+      await createQuestion({});
+      // contain all form data
+      // navigate to home page
+    } catch (error) {
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const handleInputKeyDown = (
@@ -129,6 +142,8 @@ const Question = () => {
                     // @ts-ignore
                     editorRef.current = editor;
                   }}
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
                   initiaValue=""
                   init={{
                     height: 350,
@@ -215,7 +230,20 @@ const Question = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          type="submit"
+          className="primary-gradient w-fit !text-light-900"
+          disabled={submitting}
+        >
+          {submitting ? (
+            <>
+              {/* <ReloadIcon className="mr-2 size-4 animate-spin" /> */}
+              {type === "edit" ? "Editing..." : "Posting..."}
+            </>
+          ) : (
+            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
+          )}
+        </Button>
       </form>
     </Form>
   );

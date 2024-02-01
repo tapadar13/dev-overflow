@@ -24,7 +24,7 @@ const questions = [
     upvotes: 14,
     views: 200,
     answers: [],
-    createdAt: new Date("2022-08-01T12:00:00.000Z"),
+    createdAt: new Date("2024-01-31T14:00:00.000Z"),
   },
   {
     _id: "2",
