@@ -7,45 +7,13 @@ import { HomePageFilters } from "@/constants/filters";
 import HomeFilters from "@/components/home/HomeFilters";
 import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
+import { getQuestions } from "@/lib/actions/question.action";
 
-const questions = [
-  {
-    _id: "1",
-    title: "How to get started with Next.js?",
-    tags: [
-      { _id: "1", name: "Next.js" },
-      { _id: "2", name: "React" },
-    ],
-    author: {
-      _id: "1",
-      name: "Roman Reigns",
-      picture: "/assets/icons/avatar.svg",
-    },
-    upvotes: 14,
-    views: 200,
-    answers: [],
-    createdAt: new Date("2024-01-31T14:00:00.000Z"),
-  },
-  {
-    _id: "2",
-    title: "Why do we need keys in React?",
-    tags: [
-      { _id: "1", name: "Next.js" },
-      { _id: "2", name: "React" },
-    ],
-    author: {
-      _id: "2",
-      name: "John Cena",
-      picture: "/assets/icons/avatar.svg",
-    },
-    upvotes: 18,
-    views: 400,
-    answers: [],
-    createdAt: new Date("2022-08-01T12:00:00.000Z"),
-  },
-];
+async function Home() {
+  const result = await getQuestions({});
 
-function Home() {
+  console.log(result.questions);
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -76,8 +44,8 @@ function Home() {
       <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result.questions.length > 0 ? (
+          result.questions.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}

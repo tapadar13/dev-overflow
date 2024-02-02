@@ -57,6 +57,7 @@ const Question = ({ mongoUserId }: Props) => {
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
+        path: pathname,
       });
 
       // navigate to home page
@@ -92,12 +93,6 @@ const Question = ({ mongoUserId }: Props) => {
           tagInput.value = "";
           form.clearErrors("tags");
         }
-
-        // if (field.value && !field.value.includes(tagValue as never)) {
-        //   form.setValue("tags", [...field.value, tagValue]);
-        //   tagInput.value = "";
-        //   form.clearErrors("tags");
-        // }
       } else {
         form.trigger();
       }
