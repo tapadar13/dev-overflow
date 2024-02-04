@@ -9,9 +9,17 @@ import { getQuestionById } from "@/lib/actions/question.action";
 
 import { URLProps } from "@/types";
 import Answer from "@/components/forms/Answer";
+import { auth } from "@clerk/nextjs";
+import { getUserById } from "@/lib/actions/user.action";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const result = await getQuestionById({ questionId: params.id });
+  const { userId: clerkId } = auth();
+
+  let mongoUser;
+  if (clerkId) {
+    mongoUser = await getUserById({ userId: clerkId });
+  }
 
   return (
     <>
@@ -75,7 +83,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
         ))}
       </div>
 
-      <Answer />
+      <Answer
+        question={result.content}
+        questionId={JSON.stringify(result._id)}
+        authorId={JSON.stringify(mongoUser?._id)}
+      />
     </>
   );
 };

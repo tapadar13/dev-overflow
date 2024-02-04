@@ -3,6 +3,7 @@
 import { z } from "zod";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { usePathname } from "next/navigation";
 import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
@@ -17,8 +18,16 @@ import {
 import { Button } from "../ui/button";
 import { useTheme } from "@/context/ThemeProvider";
 import { AnswerSchema } from "@/lib/validations";
+import { createAnswer } from "@/lib/actions/answer.action";
 
-const Answer = () => {
+interface Props {
+  question: string;
+  questionId: string;
+  authorId: string;
+}
+
+const Answer = ({ question, questionId, authorId }: Props) => {
+  const pathname = usePathname();
   const { mode } = useTheme();
 
   const editorRef = useRef(null);
@@ -31,7 +40,26 @@ const Answer = () => {
     },
   });
 
-  const handleCreateAnswer = () => {};
+  const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
+    try {
+      await createAnswer({
+        content: values.answer,
+        author: JSON.parse(authorId),
+        question: JSON.parse(questionId),
+        path: pathname,
+      });
+
+      form.reset();
+      if (editorRef.current) {
+        const editor = editorRef.current as any;
+        editor.setContent("");
+      }
+    } catch (error) {
+      console.error("Error creating answer:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div>
