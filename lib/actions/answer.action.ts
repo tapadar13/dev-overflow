@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
 
-import { CreateAnswerParams, GetAnswersParams } from "./shared.types";
+import {
+  AnswerVoteParams,
+  CreateAnswerParams,
+  GetAnswersParams,
+} from "./shared.types";
 import Answer from "@/database/answer.model";
 import Question from "@/database/question.model";
 
@@ -63,6 +67,86 @@ export async function getAnswers(params: GetAnswersParams) {
     return { answers };
   } catch (error) {
     console.error("Error fetching answers:", error);
+    throw error;
+  }
+}
+
+export async function upvoteAnswer(params: AnswerVoteParams) {
+  try {
+    await connectToDatabase();
+
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } };
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId },
+        $addToSet: { upvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } };
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    });
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // Increment author's reputation by +2/-2 for upvoting/revoking upvoting a answer
+    // TODO:
+
+    // Increment answer author's reputation by +10/-10 for receiving an upvote
+    // TODO:
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error upvoting answer:", error);
+    throw error;
+  }
+}
+
+export async function downvoteAnswer(params: AnswerVoteParams) {
+  try {
+    await connectToDatabase();
+
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: userId },
+        $addToSet: { downvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } };
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    });
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // Decrement author's reputation by -2/+2 for downvoting/revoking downvoting a answer
+    // TODO:
+
+    // Decrement answer author's reputation by -2/+2 for receiving a downvote
+    // TODO:
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error downvoting answer:", error);
     throw error;
   }
 }
