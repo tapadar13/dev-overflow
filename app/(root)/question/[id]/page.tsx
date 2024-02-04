@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs";
+
+// import Answer from "@/components/form/Answer";
+// import Votes from "@/components/shared/Votes";
 import { Metric } from "@/components/shared/Generic";
 import RenderTag from "@/components/shared/RenderTag";
 import ParseHTML from "@/components/shared/ParseHTML";
+// import AllAnswers from "@/components/question/AllAnswers";
 
+import { getUserById } from "@/lib/actions/user.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { getQuestionById } from "@/lib/actions/question.action";
 
@@ -78,6 +84,21 @@ const Page = async ({ params, searchParams }: URLProps) => {
           />
         ))}
       </div>
+
+      {/* @ts-ignore */}
+      {/* <AllAnswers
+        questionId={result._id}
+        userId={mongoUser?._id}
+        totalAnswers={result.answers.length}
+        page={searchParams?.page}
+        filter={searchParams?.filter}
+      />
+
+      <Answer
+        question={result.content}
+        questionId={JSON.stringify(result._id)}
+        authorId={JSON.stringify(mongoUser?._id)}
+      /> */}
     </>
   );
 };
