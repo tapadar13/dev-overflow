@@ -1,21 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { auth } from "@clerk/nextjs";
 
-// import Answer from "@/components/form/Answer";
-// import Votes from "@/components/shared/Votes";
 import { Metric } from "@/components/shared/Generic";
 import RenderTag from "@/components/shared/RenderTag";
 import ParseHTML from "@/components/shared/ParseHTML";
-// import AllAnswers from "@/components/question/AllAnswers";
-
-import { getUserById } from "@/lib/actions/user.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { getQuestionById } from "@/lib/actions/question.action";
 
-// import { ITag } from "@/mongodb";
 import { URLProps } from "@/types";
-import { ITag } from "@/database/tag.model";
+import Answer from "@/components/forms/Answer";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const result = await getQuestionById({ questionId: params.id });
@@ -45,7 +38,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
           {result.title}
         </h2>
       </div>
-
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
         <Metric
           imgUrl="/assets/icons/clock.svg"
@@ -71,11 +63,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
           textStyles="small-medium text-dark400_light700"
         />
       </div>
-
       <ParseHTML data={result.content} />
-
       <div className="mt-8 flex flex-wrap gap-2">
-        {result.tags.map((tag: ITag) => (
+        {result.tags.map((tag: any) => (
           <RenderTag
             key={tag._id}
             _id={tag._id}
@@ -85,20 +75,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         ))}
       </div>
 
-      {/* @ts-ignore */}
-      {/* <AllAnswers
-        questionId={result._id}
-        userId={mongoUser?._id}
-        totalAnswers={result.answers.length}
-        page={searchParams?.page}
-        filter={searchParams?.filter}
-      />
-
-      <Answer
-        question={result.content}
-        questionId={JSON.stringify(result._id)}
-        authorId={JSON.stringify(mongoUser?._id)}
-      /> */}
+      <Answer />
     </>
   );
 };
