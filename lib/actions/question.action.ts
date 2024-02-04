@@ -8,6 +8,7 @@ import {
   CreateQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
+  QuestionVoteParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 
@@ -88,14 +89,94 @@ export async function createQuestion(params: CreateQuestionParams) {
     });
 
     // Create an Interaction record for the user's ask_question action
-    // TODO
+    // TODO:
 
     // Increment author's reputation by +5 for creating a question
-    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
+    // TODO:
 
     revalidatePath(path);
   } catch (error) {
     console.error("Error creating question:", error);
+    throw error;
+  }
+}
+
+export async function upvoteQuestion(params: QuestionVoteParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } };
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId },
+        $addToSet: { upvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } };
+    }
+
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    });
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // Increment author's reputation by +1/-1 for upvoting/revoking upvoting an question
+    // TODO:
+
+    // Increment question author's reputation by +10/-10 for receiving a upvote
+    // TODO:
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error upvoting question:", error);
+    throw error;
+  }
+}
+
+export async function downvoteQuestion(params: QuestionVoteParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: userId },
+        $addToSet: { downvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } };
+    }
+
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    });
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // Decrement author's reputation by -1/+1 for downvoting/revoking downvoting a question
+    // TODO:
+
+    // Decrement question author's reputation by -2/+2 for receiving a downvote
+    // TODO:
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error downvoting question:", error);
     throw error;
   }
 }
