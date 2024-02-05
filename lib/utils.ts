@@ -54,3 +54,29 @@ export function formatNumber(number: number) {
     return number.toString();
   }
 }
+
+export function getJoinedDate(joinedAt: Date | undefined) {
+  if (!joinedAt) {
+    return "Joined";
+  }
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const year = joinedAt.getFullYear();
+  const month = months[joinedAt.getMonth()];
+
+  return `Joined ${month} ${year}`;
+}
