@@ -2,8 +2,14 @@
 
 import User from "@/database/user.model";
 import { connectToDatabase } from "../mongoose";
-import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.types";
-import Tag from "@/database/tag.model";
+import {
+  GetAllTagsParams,
+  GetQuestionsByTagIdParams,
+  GetTopInteractedTagsParams,
+} from "./shared.types";
+import Tag, { ITag } from "@/database/tag.model";
+import { FilterQuery } from "mongoose";
+import Question from "@/database/question.model";
 
 export async function getAllTags(params: GetAllTagsParams) {
   try {
@@ -39,6 +45,48 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
     ];
   } catch (error) {
     console.error("Error fetching top interacted tags:", error);
+    throw error;
+  }
+}
+
+export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
+  try {
+    await connectToDatabase();
+
+    const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+
+    // Create a filter for the tag by ID
+    const tagFilter: FilterQuery<ITag> = { _id: tagId };
+
+    // Find the tag by ID and populate the questions field
+    const tag = await Tag.findOne(tagFilter).populate({
+      path: "questions",
+      model: Question,
+      match: searchQuery
+        ? { title: { $regex: searchQuery, $options: "i" } }
+        : {},
+      options: {
+        sort: { createdAt: -1 },
+      },
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" }, // Populate the tags field of questions
+        { path: "author", model: User, select: "_id clerkId name picture" }, // Populate the author field of questions
+      ],
+    });
+
+    if (!tag) {
+      throw new Error("Tag not found");
+    }
+
+    // Extract the list of questions from the tag
+    const questions = tag.questions;
+
+    // Calculate the isNext indicator
+    // TODO:
+
+    return { tagTitle: tag.name, questions };
+  } catch (error) {
+    console.error("Error fetching questions by tag ID:", error);
     throw error;
   }
 }
