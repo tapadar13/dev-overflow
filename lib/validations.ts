@@ -22,3 +22,20 @@ export const QuestionsSchema = z.object({
 export const AnswerSchema = z.object({
   answer: z.string().min(100, { message: "Minimum of 100 characters." }),
 });
+
+export const ProfileSchema = z.object({
+  name: z
+    .string()
+    .min(3, {
+      message: "Name must be at least 3 characters.",
+    })
+    .max(130, { message: "Name musn't be longer then 130 characters." }),
+  username: z
+    .string()
+    .min(3, { message: "username musn't be longer then 100 characters." }),
+  portfolioWebsite: z.string().url({ message: "Please provide valid URL" }),
+  location: z.string().min(3, { message: "Please provide proper location" }),
+  bio: z.string().min(3, {
+    message: "Bio must be at least 3 characters.",
+  }),
+});
