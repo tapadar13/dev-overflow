@@ -12,6 +12,7 @@ import { URLProps } from "@/types";
 import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
 import QuestionsTab from "@/components/shared/QuestionsTab";
+import AnswersTab from "@/components/shared/AnswersTab";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
@@ -112,6 +113,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
           <TabsContent value="answers" className="flex w-full flex-col gap-6">
             {/* @ts-ignore */}
+            <AnswersTab
+              searchParams={searchParams}
+              userId={userInfo.user._id}
+              clerkId={clerkId}
+            />
           </TabsContent>
         </Tabs>
 
