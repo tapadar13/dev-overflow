@@ -6,11 +6,14 @@ import User from "@/database/user.model";
 import Tag from "@/database/tag.model";
 import {
   CreateQuestionParams,
+  DeleteQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
   QuestionVoteParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
+import Answer from "@/database/answer.model";
+import Interaction from "@/database/interaction.model";
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -180,3 +183,113 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     throw error;
   }
 }
+
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, path } = params;
+
+    // Delete the question
+    await Question.deleteOne({ _id: questionId });
+
+    // Delete all answers associated with the question
+    await Answer.deleteMany({ question: questionId });
+
+    // Delete interactions related to the question
+    await Interaction.deleteMany({ question: questionId });
+
+    // Update tags to remove references to the deleted question
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    throw error;
+  }
+}
+
+// export async function editQuestion(params: EditQuestionParams) {
+//   try {
+//     await connectToDB();
+
+//     const { questionId, title, content, tags, path } = params;
+
+//     // Find the question to be edited
+//     const question = await Question.findById(questionId).populate("tags");
+
+//     if (!question) {
+//       throw new Error("Question not found");
+//     }
+
+//     // Update question fields
+//     question.title = title;
+//     question.content = content;
+//     await question.save();
+
+//     const newTags = tags.map((tag: string) => tag.toLowerCase());
+//     const existingTags = question.tags.map((tag: any) =>
+//       tag.name.toLowerCase()
+//     );
+
+//     const tagUpdates = {
+//       tagsToAdd: [] as string[],
+//       tagsToRemove: [] as string[],
+//     };
+
+//     for (const tag of newTags) {
+//       if (!existingTags.includes(tag.toLowerCase())) {
+//         tagUpdates.tagsToAdd.push(tag);
+//       }
+//     }
+
+//     for (const tag of question.tags) {
+//       if (!newTags.includes(tag.name.toLowerCase())) {
+//         tagUpdates.tagsToRemove.push(tag._id);
+//       }
+//     }
+
+//     // Add new tags and link them to the question
+//     const newTagDocuments = [];
+
+//     for (const tag of tagUpdates.tagsToAdd) {
+//       const newTag = await Tag.findOneAndUpdate(
+//         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
+//         { $setOnInsert: { name: tag }, $push: { questions: question._id } },
+//         { upsert: true, new: true }
+//       );
+
+//       newTagDocuments.push(newTag._id);
+//     }
+
+//     console.log({ tagUpdates });
+
+//     // Remove question reference for tagsToRemove from the tag
+//     if (tagUpdates.tagsToRemove.length > 0) {
+//       await Tag.updateMany(
+//         { _id: { $in: tagUpdates.tagsToRemove } },
+//         { $pull: { questions: question._id } }
+//       );
+//     }
+
+//     if (tagUpdates.tagsToRemove.length > 0) {
+//       await Question.findByIdAndUpdate(question._id, {
+//         $pull: { tags: { $in: tagUpdates.tagsToRemove } },
+//       });
+//     }
+
+//     if (newTagDocuments.length > 0) {
+//       await Question.findByIdAndUpdate(question._id, {
+//         $push: { tags: { $each: newTagDocuments } },
+//       });
+//     }
+
+//     revalidatePath(path);
+//   } catch (error) {
+//     console.error("Error editing question:", error);
+//     throw error;
+//   }
+// }
