@@ -243,10 +243,9 @@ export async function getHotQuestions() {
     await connectToDatabase();
 
     // Find top hot questions based on views and upvotes
-    const hotQuestions = await Question.find({}).sort({
-      views: -1,
-      upvotes: -1,
-    }); // Sort by views in descending order, then upvotes in descending order
+    const hotQuestions = await Question.find({})
+      .sort({ views: -1, upvotes: -1 }) // Sort by views in descending order, then upvotes in descending order
+      .limit(5);
 
     return hotQuestions;
   } catch (error) {
