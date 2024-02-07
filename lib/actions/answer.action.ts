@@ -51,7 +51,26 @@ export async function getAnswers(params: GetAnswersParams) {
   try {
     await connectToDatabase();
 
-    const { questionId } = params;
+    const { questionId, sortBy = "highestUpvotes" } = params;
+
+    let sortOptions = {};
+
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "lowestUpvotes":
+        sortOptions = { upvotes: 1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+      default:
+        break;
+    }
 
     // Calculate the number of posts to skip based on the page number and page size.
     // TODO
@@ -61,7 +80,7 @@ export async function getAnswers(params: GetAnswersParams) {
         path: "author",
         select: "_id clerkId name picture",
       })
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     // Check if there are more answers beyond the current set
     // TODO:
