@@ -3,6 +3,7 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { getQuestionsByTagId } from "@/lib/actions/tag.action";
 import { URLProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
 export default async function Page({ params, searchParams }: URLProps) {
   const result = await getQuestionsByTagId({
@@ -47,6 +48,12 @@ export default async function Page({ params, searchParams }: URLProps) {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );
