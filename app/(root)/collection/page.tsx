@@ -16,6 +16,7 @@ async function Home({ searchParams }: SearchParamsProps) {
 
   const result = await getSavedQuestions({
     clerkId: userId,
+    searchQuery: searchParams.q,
   });
 
   return (
@@ -55,7 +56,7 @@ async function Home({ searchParams }: SearchParamsProps) {
         ) : (
           <NoResult
             title="No Saved Questions Found"
-            description="It appears that there are no saved questions in your collection at the moment 😔.Start exploring and saving questions that pique your interest 🌟"
+            description="It appears that there are no saved questions in your collection at the moment. 😔 Start exploring and saving questions that pique your interest 🌟"
             link="/"
             linkTitle="Explore Questions"
           />
