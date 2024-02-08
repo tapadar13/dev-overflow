@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
-
 import {
   AnswerVoteParams,
   CreateAnswerParams,
@@ -12,6 +11,7 @@ import {
 import Answer from "@/database/answer.model";
 import Question from "@/database/question.model";
 import Interaction from "@/database/interaction.model";
+import User from "@/database/user.model";
 
 export async function createAnswer(params: CreateAnswerParams) {
   try {
@@ -26,7 +26,7 @@ export async function createAnswer(params: CreateAnswerParams) {
     });
 
     // Add the answer to the question's answers array
-    await Question.findByIdAndUpdate(
+    const updatedQuestion = await Question.findByIdAndUpdate(
       question,
       {
         $push: { answers: newAnswer._id },
@@ -35,10 +35,16 @@ export async function createAnswer(params: CreateAnswerParams) {
     );
 
     // Create an Interaction record for the user's answer action
-    // TODO:
+    await Interaction.create({
+      user: author,
+      action: "answer",
+      question,
+      answer: newAnswer._id,
+      tags: updatedQuestion.tags,
+    });
 
     // Increment author's reputation by +10 for creating an answer
-    // TODO:
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 10 } });
 
     revalidatePath(path);
   } catch (error) {
@@ -128,11 +134,15 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
       throw new Error("Answer not found");
     }
 
-    // Increment author's reputation by +2/-2 for upvoting/revoking upvoting a answer
-    // TODO:
+    // Increment author's reputation by +2/-2 for upvoting/revoking an upvote to the answer
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -2 : 2 },
+    });
 
-    // Increment answer author's reputation by +10/-10 for receiving an upvote
-    // TODO:
+    // Increment answer author's reputation by +10/-10 for receiving an upvote/downvote to the answer
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
@@ -168,11 +178,15 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
       throw new Error("Answer not found");
     }
 
-    // Decrement author's reputation by -2/+2 for downvoting/revoking downvoting a answer
-    // TODO:
+    // Decrement author's reputation by -2/+2 for downvoting/revoking downvote to the answer
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? +2 : -2 },
+    });
 
-    // Decrement answer author's reputation by -2/+2 for receiving a downvote
-    // TODO:
+    // Decrement answer author's reputation by -2/+2 for receiving a downvote to an answer
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasdownVoted ? +2 : -2 },
+    });
 
     revalidatePath(path);
   } catch (error) {
