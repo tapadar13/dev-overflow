@@ -19,6 +19,7 @@ import { Button } from "../ui/button";
 import { useTheme } from "@/context/ThemeProvider";
 import { AnswerSchema } from "@/lib/validations";
 import { createAnswer } from "@/lib/actions/answer.action";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
   question: string;
@@ -29,7 +30,6 @@ interface Props {
 const Answer = ({ question, questionId, authorId }: Props) => {
   const pathname = usePathname();
   const { mode } = useTheme();
-
   const editorRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const [aiSubmitting, setAiSubmitting] = useState(false);
@@ -42,6 +42,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
   });
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
+    if (!authorId) setSubmitting(true);
     try {
       await createAnswer({
         content: values.answer,
@@ -63,7 +64,9 @@ const Answer = ({ question, questionId, authorId }: Props) => {
   };
 
   const generateAIAnswer = async () => {
-    if (!authorId) setAiSubmitting(true);
+    if (!authorId) return;
+    console.log("AI here!");
+    setAiSubmitting(true);
 
     try {
       const response = await fetch(
@@ -77,6 +80,16 @@ const Answer = ({ question, questionId, authorId }: Props) => {
       );
 
       const aiAnswer = await response.json();
+
+      console.log("AI Answer:", aiAnswer);
+
+      // Convert plain text to HTML format
+      const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br />");
+
+      if (editorRef.current) {
+        const editor = editorRef.current as any;
+        editor.setContent(formattedAnswer);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -95,14 +108,23 @@ const Answer = ({ question, questionId, authorId }: Props) => {
           className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
           onClick={() => generateAIAnswer()}
         >
-          <Image
-            src="/assets/icons/stars.svg"
-            alt="stars"
-            width={12}
-            height={12}
-            className="object-contain"
-          />
-          Generate AI answer
+          {aiSubmitting ? (
+            <>
+              <ReloadIcon className="mr-2 size-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Image
+                src="/assets/icons/stars.svg"
+                alt="stars"
+                width={12}
+                height={12}
+                className="object-contain"
+              />
+              Generate AI answer
+            </>
+          )}
         </Button>
       </div>
 
