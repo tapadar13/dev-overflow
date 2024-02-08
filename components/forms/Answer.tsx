@@ -32,6 +32,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
 
   const editorRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
+  const [aiSubmitting, setAiSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -61,6 +62,26 @@ const Answer = ({ question, questionId, authorId }: Props) => {
     }
   };
 
+  const generateAIAnswer = async () => {
+    if (!authorId) setAiSubmitting(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            question,
+          }),
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAiSubmitting(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
@@ -70,7 +91,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
 
         <Button
           className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
-          onClick={() => {}}
+          onClick={() => generateAIAnswer()}
         >
           <Image
             src="/assets/icons/stars.svg"
