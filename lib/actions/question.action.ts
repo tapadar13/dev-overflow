@@ -133,10 +133,15 @@ export async function createQuestion(params: CreateQuestionParams) {
     });
 
     // Create an Interaction record for the user's ask_question action
-    // TODO:
+    await Interaction.create({
+      user: author,
+      action: "ask_question",
+      question: question._id,
+      tags: tagDocuments,
+    });
 
     // Increment author's reputation by +5 for creating a question
-    // TODO:
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
 
     revalidatePath(path);
   } catch (error) {
@@ -172,11 +177,15 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
 
-    // Increment author's reputation by +1/-1 for upvoting/revoking upvoting an question
-    // TODO:
+    // Increment author's reputation by +1/-1 for upvoting/revoking an upvote to the question
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -1 : 1 },
+    });
 
-    // Increment question author's reputation by +10/-10 for receiving a upvote
-    // TODO:
+    // Increment question author's reputation by +10/-10 for receiving an upvote/downvote to the question
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
