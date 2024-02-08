@@ -75,6 +75,8 @@ const Answer = ({ question, questionId, authorId }: Props) => {
           }),
         }
       );
+
+      const aiAnswer = await response.json();
     } catch (error) {
       console.log(error);
     } finally {
