@@ -34,7 +34,7 @@ async function Home({ searchParams }: SearchParamsProps) {
           route="/"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
-          placeholder="Search questions..."
+          placeholder="Search for questions..."
           otherClasses="flex-1"
         />
         <Filter
