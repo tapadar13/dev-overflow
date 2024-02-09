@@ -21,6 +21,7 @@ import { z } from "zod";
 import Image from "next/image";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
+import { toast } from "../ui/use-toast";
 
 interface Props {
   type?: string;
@@ -62,6 +63,11 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
           path: pathname,
         });
 
+        toast({
+          title: "Question Edited",
+          description: "Your question has been successfully edited.",
+        });
+
         router.push(`/question/${parsedQuestionDetails._id}`);
       } else {
         // make an async call to API - create a question
@@ -74,10 +80,19 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
           path: pathname,
         });
 
+        toast({
+          title: "Question Posted",
+          description: "Your question has been successfully posted.",
+        });
+
         // navigate to home page
         router.push("/");
       }
     } catch (error) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
     } finally {
       setSubmitting(false);
     }

@@ -20,6 +20,7 @@ import { useTheme } from "@/context/ThemeProvider";
 import { AnswerSchema } from "@/lib/validations";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { toast } from "../ui/use-toast";
 
 interface Props {
   question: string;
@@ -42,7 +43,13 @@ const Answer = ({ question, questionId, authorId }: Props) => {
   });
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
-    if (!authorId) setSubmitting(true);
+    if (!authorId)
+      return toast({
+        title: "Please log in",
+        description: "You must be logged in to post an Answer",
+      });
+
+    setSubmitting(true);
     try {
       await createAnswer({
         content: values.answer,
@@ -56,15 +63,28 @@ const Answer = ({ question, questionId, authorId }: Props) => {
         const editor = editorRef.current as any;
         editor.setContent("");
       }
+
+      toast({
+        title: "Answer Posted",
+        description: "Your answer has been successfully posted.",
+      });
     } catch (error) {
-      console.error("Error creating answer:", error);
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
   const generateAIAnswer = async () => {
-    if (!authorId) return;
+    if (!authorId)
+      return toast({
+        title: "Please log in",
+        description: "You must be logged in to generate an AI Answer",
+      });
+
     setAiSubmitting(true);
 
     try {
@@ -87,8 +107,18 @@ const Answer = ({ question, questionId, authorId }: Props) => {
         const editor = editorRef.current as any;
         editor.setContent(formattedAnswer);
       }
+
+      toast({
+        title: "AI Answer Generated",
+        description:
+          "The AI has successfully generated an answer based on your query.",
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description:
+          "There was a problem with your AI request. Why don't you post the answer yourself ^.^",
+      });
     } finally {
       setAiSubmitting(false);
     }

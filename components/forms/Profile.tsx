@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ProfileSchema } from "@/lib/validations";
 import { updateUser } from "@/lib/actions/user.action";
+import { toast } from "../ui/use-toast";
 
 interface Params {
   clerkId: string;
@@ -57,9 +58,17 @@ const Profile = ({ clerkId, user }: Params) => {
         path: pathname,
       });
 
+      toast({
+        title: "Profile Updated",
+        description: "Your profile information has been successfully updated.",
+      });
+
       router.back();
     } catch (error: any) {
-      console.error("Error updating profile:", error);
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
     } finally {
       setSubmitting(false);
     }
