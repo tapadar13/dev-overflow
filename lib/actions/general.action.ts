@@ -88,7 +88,7 @@ export async function globalSearch(params: SearchParams) {
 
 export async function getRecommendedQuestions(params: RecommendedParams) {
   try {
-    await connectToDB();
+    await connectToDatabase();
 
     const { userId, page = 1, pageSize = 20, searchQuery } = params;
 
