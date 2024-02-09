@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { ProfileSchema } from "@/lib/validations";
 import { updateUser } from "@/lib/actions/user.action";
 import { toast } from "../ui/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Params {
   clerkId: string;
@@ -188,7 +189,14 @@ const Profile = ({ clerkId, user }: Params) => {
             className="primary-gradient w-fit"
             disabled={submitting}
           >
-            {submitting ? <>"Saving..."</> : <>Save</>}
+            {submitting ? (
+              <>
+                <ReloadIcon className="mr-2 size-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <>Submit</>
+            )}
           </Button>
         </div>
       </form>
