@@ -65,7 +65,6 @@ const Answer = ({ question, questionId, authorId }: Props) => {
 
   const generateAIAnswer = async () => {
     if (!authorId) return;
-    console.log("AI here!");
     setAiSubmitting(true);
 
     try {
@@ -80,8 +79,6 @@ const Answer = ({ question, questionId, authorId }: Props) => {
       );
 
       const aiAnswer = await response.json();
-
-      console.log("AI Answer:", aiAnswer);
 
       // Convert plain text to HTML format
       const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br />");
