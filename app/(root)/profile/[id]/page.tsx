@@ -13,12 +13,19 @@ import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
 import QuestionsTab from "@/components/shared/QuestionsTab";
 import AnswersTab from "@/components/shared/AnswersTab";
+import { getTopInteractedTags } from "@/lib/actions/tag.action";
+import RenderTag from "@/components/shared/RenderTag";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
 
   const userInfo = await getUserInfo({ userId: params.id });
   if (!userInfo.user) return null;
+
+  const interactedTags = await getTopInteractedTags({
+    userId: userInfo.user._id,
+    limit: 10,
+  });
 
   return (
     <>
@@ -126,7 +133,17 @@ const Page = async ({ params, searchParams }: URLProps) => {
         <div className="flex min-w-[278px] flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
 
-          <div className="mt-7 flex flex-col gap-4"></div>
+          <div className="mt-7 flex flex-col gap-4">
+            {interactedTags.map((tag) => (
+              <RenderTag
+                key={tag._id}
+                _id={tag._id}
+                name={tag.name}
+                totalQuestions={tag.questions ? tag.questions.length : 0}
+                showCount
+              />
+            ))}
+          </div>
         </div>
       </div>
     </>

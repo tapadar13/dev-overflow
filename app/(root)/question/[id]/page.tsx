@@ -13,6 +13,7 @@ import { auth } from "@clerk/nextjs";
 import { getUserById } from "@/lib/actions/user.action";
 import AllAnswers from "@/components/shared/AllAnswers";
 import Votes from "@/components/shared/Votes";
+import { ITag } from "@/database/tag.model";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
@@ -87,7 +88,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
       </div>
       <ParseHTML data={result.content} />
       <div className="mt-8 flex flex-wrap gap-2">
-        {result.tags.map((tag: any) => (
+        {result.tags.map((tag: ITag) => (
           <RenderTag
             key={tag._id}
             _id={tag._id}

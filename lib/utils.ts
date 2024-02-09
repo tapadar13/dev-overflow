@@ -49,13 +49,22 @@ export function formatDate(createdAt: Date) {
   return formattedDate;
 }
 
-export function formatNumber(number: number) {
-  if (number >= 1000000) {
-    return (number / 1000000).toFixed(1) + "M";
-  } else if (number >= 1000) {
-    return (number / 1000).toFixed(1) + "K";
+export function formatNumber(upvotes: number | string | any[]) {
+  // If upvotes is an array, return its length (assuming it's an array of references)
+  if (Array.isArray(upvotes)) {
+    return upvotes.length;
+  }
+
+  // If upvotes is a number or string, format it
+  const numberValue =
+    typeof upvotes === "string" ? parseInt(upvotes, 10) : upvotes;
+
+  if (numberValue >= 1000000) {
+    return (numberValue / 1000000).toFixed(1) + "M";
+  } else if (numberValue >= 1000) {
+    return (numberValue / 1000).toFixed(1) + "K";
   } else {
-    return number.toString();
+    return numberValue.toString();
   }
 }
 

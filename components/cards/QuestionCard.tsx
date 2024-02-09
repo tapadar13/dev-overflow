@@ -15,6 +15,7 @@ export interface QuestionProps {
   }[];
   author: {
     _id: string;
+    clerkId: string;
     name: string;
     picture: string;
   };
@@ -70,7 +71,7 @@ const QuestionCard = ({
           alt="user avatar"
           value={author.name}
           title={` • asked ${getTimeStamp(createdAt)}`}
-          href={`/profile/${author._id}`}
+          href={`/profile/${author.clerkId}`}
           textStyles="body-medium text-dark400_light700"
           isAuthor
         />

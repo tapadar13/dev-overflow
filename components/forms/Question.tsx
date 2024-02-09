@@ -19,6 +19,7 @@ import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import { z } from "zod";
 import Image from "next/image";
+import { useTheme } from "@/context/ThemeProvider";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "../ui/use-toast";
@@ -33,6 +34,7 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
   const editorRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { mode } = useTheme();
   const [submitting, setSubmitting] = useState(false);
 
   const parsedQuestionDetails =
@@ -115,9 +117,6 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
           });
         }
 
-        console.log("field:", field);
-        console.log("field.value:", field.value);
-
         if (field && field.value && !field.value.includes(tagValue as never)) {
           form.setValue("tags", [...field.value, tagValue]);
           tagInput.value = "";
@@ -164,7 +163,7 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
           )}
         />
         <FormField
-          //   key={mode}
+          key={mode}
           control={form.control}
           name="explanation"
           render={({ field }) => (
@@ -186,6 +185,8 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
                   init={{
                     height: 350,
                     menubar: false,
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                     plugins: [
                       "advlist",
                       "autolink",

@@ -245,7 +245,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     }
 
     // Extract the saved questions from the user
-    const savedQuestions = user.saved;
+    const savedQuestions = user.saved.slice(0, pageSize);
 
     return { questions: savedQuestions, isNext };
   } catch (error) {
