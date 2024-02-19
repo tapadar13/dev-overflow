@@ -19,6 +19,7 @@ import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
 import { assignBadges } from "../utils";
+import Interaction from "@/database/interaction.model";
 
 export async function createUser(userData: CreateUserParams) {
   try {
@@ -137,6 +138,41 @@ export async function deleteUser(params: DeleteUserParams) {
     await Question.deleteMany({ author: user._id });
 
     // TODO: Delete all user answers, comments etc.
+    await Answer.deleteMany({ author: user._id });
+
+    // Delete the answers created by other users on questions created by the user
+    await Answer.deleteMany({ question: { $in: userQuestionIds } });
+
+    // Remove user reference from upvotes and downvotes on questions
+    await Question.updateMany(
+      { upvotes: user._id },
+      { $pull: { upvotes: user._id } }
+    );
+
+    await Question.updateMany(
+      { downvotes: user._id },
+      { $pull: { downvotes: user._id } }
+    );
+
+    // Remove user reference from upvotes and downvotes on answers
+    await Answer.updateMany(
+      { upvotes: user._id },
+      { $pull: { upvotes: user._id } }
+    );
+
+    await Answer.updateMany(
+      { downvotes: user._id },
+      { $pull: { downvotes: user._id } }
+    );
+
+    // Delete interactions involving the user
+    await Interaction.deleteMany({ user: user._id });
+
+    // Update tags to remove references to the user's questions
+    await Tag.updateMany(
+      { questions: { $in: userQuestionIds } },
+      { $pull: { questions: { $in: userQuestionIds } } }
+    );
 
     // Delete the user
     const deletedUser = await User.findByIdAndDelete(user._id);
