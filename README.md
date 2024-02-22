@@ -1,6 +1,6 @@
-## Dev Overflow
+## Dev Overflow 📝:
 
-Dev Overflow is a powerful Developer Community Platform built with cutting-edge technologies to foster collaboration, knowledge sharing, and an engaging user experience. It is built with Next.js, MongoDB, TypeScript and TailwindCSS 📝
+Dev Overflow is a powerful Developer Community Platform built with cutting-edge technologies to foster collaboration, knowledge sharing, and an engaging user experience. It is built with Next.js, MongoDB, TypeScript and TailwindCSS.
 
 ![Home](/public/assets/screenshots/home-dark.png)
 
@@ -8,8 +8,9 @@ Dev Overflow is a powerful Developer Community Platform built with cutting-edge 
 
 ![Home](/public/assets/screenshots/home.png)
 ![Community](/public/assets/screenshots/community.png)
-![Collections](/public/assets/screenshots/collections.png)
 ![Profile](/public/assets/screenshots/profile.png)
+![Collections](/public/assets/screenshots/collections.png)
+![Jobs](/public/assets/screenshots/jobs.png)
 ![Tags](/public/assets/screenshots/tags.png)
 ![Question Details](/public/assets/screenshots/question-details.png)
 
@@ -39,7 +40,6 @@ Dev Overflow is a powerful Developer Community Platform built with cutting-edge 
   - [x] Users can post questions with support for markdown code rendering, complete code blocks, and tagging functionality.
   - [x] A comprehensive answering system with a complete markdown editor and code block support.
   - [x] Users can upvote/downvote questions and answers, promoting community-driven engagement.
-  - [x] Paginated answers with a robust validation system for data integrity.
 
 - **Global Search System**
 
@@ -62,6 +62,29 @@ Dev Overflow is a powerful Developer Community Platform built with cutting-edge 
   - [x] A responsive design, ensuring optimal user experience across various devices.
   - [x] Users can switch between light, dark, and system mode.
 
+- **Job Page**
+
+  - [x] A `Jobs` tab users can see job openings in their respective locations.
+  - [x] Users can search for jobs by selecting a specific country from the filter for which they want to see job openings.
+
+- **Smart Filtering System**
+
+  - [x] All pages have a filter system to sort questions/tags/answers/users etc. based on highest upvotes/newest/frequent/top contributors, etc.
+  - [x] Questions can be sorted based on a comprehensive “Recommendation” system where a user can get posts of the tags they have been interacting with, except their own questions.
+
+- **Pagination**
+
+  - [x] User-friendly pagination at the bottom of every single page.
+
+- **Reputation and Badge System**
+
+  - [x] Users earn reputation points based on platform activities (posting questions and answers, upvoting questions/answers etc).
+  - [x] Badges are displayed on user profiles as a testament to engagement.
+
+- **User Analytics for Optimization**
+
+  - [x] Efficiently processed user data, calculated metrics, and optimized performance using MongoDB's aggregation pipeline by leveraging powerful stages like `$match`, `$group`, and `$project`.
+
 - **Form Handling and Validation**
 
   - [x] Utilized React Hook Form for all forms across the application, ensuring a smooth and efficient user input experience.
@@ -80,7 +103,7 @@ Dev Overflow is a powerful Developer Community Platform built with cutting-edge 
 
 ## Inspiration 🎨:
 
-Inspired by [Stack Overflow's](https://stackoverflow.com/) design.
+Inspired by [Stack Overflow](https://stackoverflow.com/)'s design.
 
 ## Contributing 🤝:
 
