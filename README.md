@@ -116,4 +116,47 @@ To contribute to this project, please follow these steps:
 - Push your changes to your fork.
 - Submit a pull request.
 
+## Setting up locally
+
+### 1. Clone on your local machine
+
+```bash
+https://github.com/tapadar13/dev-overflow.git
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Add environment variables to your `.env.local` file
+
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=
+NEXT_PUBLIC_AFTER_SIGN_IN_URL=
+NEXT_PUBLIC_AFTER_SIGN_UP_URL=
+
+NEXT_CLERK_WEBHOOK_SECRET=
+
+NEXT_PUBLIC_TINY_EDITOR_API_KEY=
+
+MONGODB_URL=
+
+NEXT_PUBLIC_SERVER_URL=
+OPENAI_API_KEY=
+
+NEXT_PUBLIC_RAPID_API_KEY=
+```
+
+### 5. Run on your local server
+
+```bash
+npm run dev
+```
+
 If you have read all of this, please star the repo, it will help me a lot ❤️
